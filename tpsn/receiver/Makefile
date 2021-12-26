@@ -1,0 +1,4 @@
+COMPONENT=TpsnReceiverAppC
+CFLAGS+=-I$(TOSDIR)/lib/printf
+CFLAGS+=-DPRINTF_BUFFER_SIZE=2000
+include $(MAKERULES)
