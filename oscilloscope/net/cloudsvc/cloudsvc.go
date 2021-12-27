@@ -7,13 +7,19 @@ import (
 	"os"
 )
 
-type AppHandler struct {
-	Data []byte
-}
+func main() {
+	var listen string
 
-func (r AppHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	switch req.URL.Path {
-	case "/post-data":
+	// Check listen address
+	if len(os.Args) < 2 {
+		log.Fatal("Provide listen address.")
+	} else {
+		listen = os.Args[1]
+	}
+
+	var data []byte
+
+	postHandler := func(w http.ResponseWriter, req *http.Request) {
 		if req.Header.Get("Authorization") != "There's no authorization" {
 			log.Print("Post forbidden")
 			w.WriteHeader(403)
@@ -29,11 +35,12 @@ func (r AppHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(400)
 			return
 		}
-		r.Data = body
+		data = body
 		w.WriteHeader(200)
 		log.Print("Post success")
-		return
-	case "/get-data":
+	}
+
+	getHandler := func(w http.ResponseWriter, req *http.Request) {
 		if req.Header.Get("Authorization") != "There's no authorization" {
 			log.Print("Get forbidden")
 			w.WriteHeader(403)
@@ -45,27 +52,17 @@ func (r AppHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 		w.Header().Add("Content-Type", "text/plain")
 		w.WriteHeader(200)
-		_, err := w.Write(r.Data)
+		_, err := w.Write(data)
 		if err != nil {
 			log.Print("Data write failed")
 			return
 		}
 		log.Print("Get success")
-		return
-	}
-}
-
-func main() {
-	var listen string
-
-	// Check listen address
-	if len(os.Args) < 2 {
-		log.Fatal("Provide listen address.")
-	} else {
-		listen = os.Args[1]
 	}
 
 	log.Printf("Starting cloudsvc at %s...", listen)
 	// Start server
-	log.Fatal(http.ListenAndServe(listen, AppHandler{Data: []byte{}}))
+	http.HandleFunc("/post-data", postHandler)
+	http.HandleFunc("/get-data", getHandler)
+	log.Fatal(http.ListenAndServe(listen, nil))
 }
