@@ -3,6 +3,10 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+hilt {
+    enableAggregatingTask = true
+}
+
 android {
     compileSdkVersion 31
     buildToolsVersion '30.0.2'
