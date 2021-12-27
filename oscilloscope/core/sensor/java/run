@@ -1,0 +1,3 @@
+CLASSPATH="oscilloscope.jar:$CLASSPATH"
+
+java Oscilloscope
