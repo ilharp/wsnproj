@@ -1,0 +1,5 @@
+COMPONENT=RepeaterAppC
+CFLAGS += -I$(TOSDIR)/lib/printf
+CFLAGS += -DPRINTF_BUFFER_SIZE=256
+
+include $(MAKERULES)
