@@ -50,7 +50,7 @@ func main() {
 			w.WriteHeader(400)
 			return
 		}
-		w.Header().Add("Content-Type", "text/plain")
+		w.Header().Add("Content-Type", "text/plain;charset=utf-8")
 		w.WriteHeader(200)
 		_, err := w.Write(data)
 		if err != nil {
