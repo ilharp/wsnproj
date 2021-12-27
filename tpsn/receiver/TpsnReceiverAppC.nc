@@ -7,6 +7,7 @@ configuration TpsnReceiverAppC {}
 
 // Implementation
 implementation {
+  components PrintfC, SerialStartC;
   components MainC;
   components LedsC;
   components TpsnReceiverC as App;

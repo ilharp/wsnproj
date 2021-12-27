@@ -8,6 +8,7 @@ configuration TpsnSenderAppC {}
 
 // Implementation
 implementation {
+  components PrintfC, SerialStartC;
   components MainC;
   components LedsC;
   components TpsnSenderC as App;
