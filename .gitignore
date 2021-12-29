@@ -515,3 +515,6 @@ gradle-app.setting
 
 # Go modules
 !go.mod
+
+# nesdoc documentation
+nesdoc/
