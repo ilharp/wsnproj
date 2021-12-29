@@ -81,7 +81,7 @@ class Window {
 
         for (i = 0; ; i++) {
             if (i == len || nodeId < get(i)) {
-                motes.add(i, new Integer(nodeId));
+                motes.add(i, nodeId);
                 // Cycle through a set of initial colors
                 colors.add(i, cycle[cycleIndex++ % cycle.length]);
                 break;
@@ -182,7 +182,7 @@ class Window {
     final JSlider xSlider = new JSlider(JSlider.HORIZONTAL, 0, 8, graph.scale);
     Hashtable xTable = new Hashtable();
     for (int i = 0; i <= 8; i += 2) {
-        xTable.put(new Integer(i),
+        xTable.put(i,
                makeSmallLabel("" + (Graph.MIN_WIDTH << i),
                       JLabel.CENTER));
     }
