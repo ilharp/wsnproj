@@ -9,9 +9,9 @@ uint16_t id1, id2;
 uint16_t count1, count2;
 uint16_t readings1[10], readings2[10];
 
-uint16_t sensor1 = 110; //用于判断收到的数据是否为节点1
-uint16_t sensor2 = 119; //用于判断收到的数据是否为节点2
-uint16_t zj = 123; //用于观察是否为中继站转发而不是节点直接发而受到的信息
+uint16_t sensor1 = 63; //用于判断收到的数据是否为节点1
+uint16_t sensor2 = 64; //用于判断收到的数据是否为节点2
+// uint16_t zj = 62; //用于观察是否为中继站转发而不是节点直接发而受到的信息
 uint16_t s1 = 0; //用于判断是否收到节点1的数据
 uint16_t s2 = 0; //用于判断是否收到节点2的数据
 uint16_t i = 0;
@@ -76,12 +76,11 @@ implementation {
         btrpkt->version = version1;
         btrpkt->interval = interval1;
         btrpkt->id = id1;
-        // btrpkt->id = zj;
         btrpkt->count = count1;
         for (i = 0; i < 10; i++) {
           btrpkt->readings[i] = readings1[i];
         }
-        if (call AMSend.send(280, &pkt, sizeof(oscilloscope_t)) == SUCCESS) {
+        if (call AMSend.send(61, &pkt, sizeof(oscilloscope_t)) == SUCCESS) {
           busy = TRUE;
         }
         s1 = 0;     //收到并发出以后再次置0
@@ -107,7 +106,7 @@ implementation {
         for (i = 0; i < 10; i++) {
           btrpkt->readings[i] = readings2[i];
         }
-        if (call AMSend.send(280, &pkt, sizeof(oscilloscope_t)) == SUCCESS) {
+        if (call AMSend.send(61, &pkt, sizeof(oscilloscope_t)) == SUCCESS) {
           busy = TRUE;
         }
         s2 = 0;

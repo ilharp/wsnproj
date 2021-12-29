@@ -73,7 +73,7 @@ implementation {
       btrpkt->T1 = T1; //将T1存入数据包
 
       if (call AMSend.send(
-              2, // AM_BROADCAST_ADDR广播模式,修改AM_BROADCAST_ADDR为2，则节点只向2号节点发，其他节点不响应
+              62, // AM_BROADCAST_ADDR广播模式,修改AM_BROADCAST_ADDR为2，则节点只向2号节点发，其他节点不响应
               &pkt, sizeof(TpsnSenderMsg)) == SUCCESS) {
         busy = TRUE;
       }

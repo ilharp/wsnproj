@@ -83,7 +83,7 @@ implementation {
         // above
         memcpy(call AMSend.getPayload(&sendBuf, sizeof(local)), &local,
                sizeof local);
-        if (call AMSend.send(280, &sendBuf, sizeof local) == SUCCESS)
+        if (call AMSend.send(62, &sendBuf, sizeof local) == SUCCESS)
           sendBusy = TRUE;
       }
       if (!sendBusy)

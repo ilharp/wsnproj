@@ -56,7 +56,7 @@ implementation {
       printfflush();
       btrpkt->T2 = T2; //将T2和T3存入数据包
       btrpkt->T3 = T3;
-      if (call AMSend.send(1, &pkt, sizeof(TpsnReceiverMsg)) == SUCCESS) {
+      if (call AMSend.send(61, &pkt, sizeof(TpsnReceiverMsg)) == SUCCESS) {
         busy = TRUE;
       }
       setLeds(btrpkt->counter);
