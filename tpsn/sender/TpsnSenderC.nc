@@ -18,29 +18,16 @@ module TpsnSenderC {
 // Implementation
 implementation {
   uint16_t counter;
-  nx_uint32_t T1, T2, T3, T4;
-  nx_uint32_t T14, T23;
-  uint32_t delta;
+  nx_uint32_t T0, T1, T2, T3, T4;
+  uint64_t T14, T23;
+  uint32_t origin_delta, delta;
+
   uint32_t delay;
   message_t pkt;
   bool busy = FALSE;
 
-  void setLeds(uint16_t val) {
-    if (val & 0x01)
-      call Leds.led0On();
-    else
-      call Leds.led0Off();
-    if (val & 0x02)
-      call Leds.led1On();
-    else
-      call Leds.led1Off();
-    if (val & 0x04)
-      call Leds.led2On();
-    else
-      call Leds.led2Off();
-  }
-
   event void Boot.booted() {
+    call Leds.led0Toggle();
     call AMControl.start(); //启动串口
   }
 
@@ -55,8 +42,8 @@ implementation {
   event void AMControl.stopDone(error_t err) {}
 
   event void Timer0.fired() {
-    atomic T1 = call Timer0.getNow(); //获取T1
-    printfflush();
+    atomic T0 = call Timer0.getNow(); //获取T1
+    atomic T1 = T0 + (unsigned int) delta;
 
     counter++;
 
@@ -88,31 +75,35 @@ implementation {
 
   event message_t *Receive.receive(message_t * msg, void *payload,
                                    uint8_t len) {
-    T4 = call Timer0.getNow();
+    atomic T4 = call Timer0.getNow();
+    atomic T4 += (unsigned int) delta;
     if (len == sizeof(TpsnSenderMsg)) {
       TpsnSenderMsg *btrpkt = (TpsnSenderMsg *)payload; //提取数据包
-      printf("T4 is: %u\n", T4);
       T2 = btrpkt->T2; //节点A从B发送回的包中提取T2和T3
       T3 = btrpkt->T3;
       T23 = T2 + T3;
       T14 = T1 + T4;
+      atomic origin_delta = delta;
       if (T23 > T14) { //计算时偏
-        delta = ((T2 + T3) - (T1 + T4)) / 2;
+        atomic delta += ((T2 + T3) - (T1 + T4)) / 2;
       } else {
-        delta = ((T1 + T4) - (T2 + T3)) / 2;
+        atomic delta += ((T1 + T4) - (T2 + T3)) / 2;
       }
 
       atomic delay = ((T2 - T1) + (T4 - T3)) / 2; //计算时延
 
-      T4 = T4 + delta; //计算校正好的T4
-      printf("T3 is: %u\n", T3);
+      printf("T1 is: %u\n",  T1);
       printf("T2 is: %u\n", T2);
-      printf("rightT4 is: %u\n", T4); //打印校正好的T4
+      printf("T3 is: %u\n", T3);
+      printf("T4 is: %u\n", T4);
       printf("delay is: %u\n", delay);
       printf("delta is: %u\n", delta);
+      printf("Delta by delta: %d\n", delta - origin_delta);
       printf("\n");
       printfflush();
-      setLeds(btrpkt->counter);
+      call Leds.led0Toggle();
+      call Leds.led1Toggle();
+      call Leds.led2Toggle();
     }
     return msg;
   }
