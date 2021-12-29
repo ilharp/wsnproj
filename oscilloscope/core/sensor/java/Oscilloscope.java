@@ -1,4 +1,5 @@
 import net.tinyos.message.*;
+import net.tinyos.packet.*;
 import net.tinyos.util.*;
 import java.io.*;
 
@@ -28,6 +29,8 @@ public class Oscilloscope implements MessageListener
     MoteIF mote;
     Data data;
     Window window;
+    String[] osArgs;
+    int dataCount = 0;
 
     /* The current sampling period. If we receive a message from a mote
        with a newer version, we update our interval. If we receive a message
@@ -44,7 +47,8 @@ public class Oscilloscope implements MessageListener
     data = new Data(this);
     window = new Window(this);
     window.setup();
-    mote = new MoteIF(PrintStreamMessenger.err);
+    PhoenixSource phoenix = BuildSource.makePhoenix(osArgs[1], PrintStreamMessenger.err);
+    mote = new MoteIF(phoenix);
     mote.registerListener(new OscilloscopeMsg(), this);
     }
 
@@ -65,12 +69,12 @@ public class Oscilloscope implements MessageListener
         data.update(omsg.get_id(), omsg.get_count(), omsg.get_readings());
      try
       {
-    	  FileWriter a=new FileWriter("/mnt/hgfs/data/data.txt");
+    	  FileWriter a=new FileWriter(osArgs[3], true);
     	  int[] b =new int[10];
         b=omsg.get_readings();
-    	  a.write("id: "+omsg.get_id()+"data: ");
-		  for(int i=0;i<=9;i++)
-		  a.write(b[i]+" ");
+    	  a.write((++dataCount)+"ID"+omsg.get_id()+"DT");
+		  for(int i=0;i<=9;i++) a.write(b[i]+"SP");
+          a.write("\n");
     	  a.close();
       }
      catch(IOException e)
@@ -132,7 +136,18 @@ public class Oscilloscope implements MessageListener
 
     public static void main(String[] args)
     {
+        try
+      {
+    	  FileWriter a=new FileWriter(args[3]);
+    	  a.write("");
+    	  a.close();
+      }
+     catch(IOException e)
+      {
+    	e.printStackTrace();
+      }
     Oscilloscope me = new Oscilloscope();
+        me.osArgs = args;
     me.run();
     }
 }
