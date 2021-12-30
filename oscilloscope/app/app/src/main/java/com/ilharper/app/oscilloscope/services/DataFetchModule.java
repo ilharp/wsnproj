@@ -1,24 +1,22 @@
 package com.ilharper.app.oscilloscope.services;
 
+import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
-import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.qualifiers.ActivityContext;
 
-import javax.inject.Singleton;
-
-@InstallIn(SingletonComponent.class)
+@InstallIn(ActivityComponent.class)
 @Module
 public class DataFetchModule {
     @Provides
-    @Singleton
-    public VolleyRequest provideVolleyRequest() {
-        return new VolleyRequest();
+    public VolleyRequest provideVolleyRequest(@ActivityContext Context context) {
+        return new VolleyRequest(context);
     }
 
     @Provides
-    @Singleton
-    public DataFetchService provideDataFetch() {
-        return new DataFetchService();
+    public DataFetchService provideDataFetch(VolleyRequest volleyRequest) {
+        return new DataFetchService(volleyRequest);
     }
 }
