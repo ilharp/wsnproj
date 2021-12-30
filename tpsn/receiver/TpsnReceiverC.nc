@@ -22,9 +22,10 @@ implementation {
   message_t pkt;
   bool busy = FALSE;
 
-  void setLeds(uint16_t val) { call AMControl.start(); }
-
-  event void Boot.booted() { call AMControl.start(); }
+  event void Boot.booted() {
+    call Leds.led0Toggle();
+    call AMControl.start();
+  }
 
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
@@ -59,7 +60,9 @@ implementation {
       if (call AMSend.send(61, &pkt, sizeof(TpsnReceiverMsg)) == SUCCESS) {
         busy = TRUE;
       }
-      setLeds(btrpkt->counter);
+      call Leds.led0Toggle();
+      call Leds.led1Toggle();
+      call Leds.led2Toggle();
     }
     return msg;
   }
